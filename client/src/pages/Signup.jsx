@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -11,25 +11,39 @@ export default function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    await axios.post("http://localhost:5000/api/auth/register", {
-      name,
-      email,
-      password,
-    });
+    try {
+      await API.post("/api/auth/register", {
+        name,
+        email,
+        password,
+      });
 
-    navigate("/login");
+      alert("Account created successfully");
+      navigate("/login");
+    } catch (err) {
+      alert(err.response?.data?.message || "Signup failed");
+    }
   };
 
   return (
     <div className="auth-box">
       <h2>Signup</h2>
       <form onSubmit={handleSignup}>
-        <input placeholder="Name" onChange={(e) => setName(e.target.value)} />
-        <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+        <input
+          placeholder="Name"
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          placeholder="Email"
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <input
           type="password"
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button>Create Account</button>
       </form>

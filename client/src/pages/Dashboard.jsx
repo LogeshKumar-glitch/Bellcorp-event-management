@@ -1,31 +1,30 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/registrations/my", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => setEvents(res.data));
+    API.get("/api/registrations/my")
+      .then((res) => setEvents(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   return (
-    <div className="page">
+    <div style={{ padding: "40px" }}>
       <h2>My Registered Events</h2>
 
-      {events.length === 0 && <p>No registrations yet</p>}
-
-      {events.map((e) => (
-        <div key={e._id} className="card">
-          <h3>{e.name}</h3>
-          <p>{e.location}</p>
-        </div>
-      ))}
+      {events.length === 0 ? (
+        <p>No registered events</p>
+      ) : (
+        <ul>
+          {events.map((event) => (
+            <li key={event._id}>
+              {event.name} – {event.location}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

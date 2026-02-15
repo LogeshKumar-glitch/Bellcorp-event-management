@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../services/api"; // ✅ IMPORTANT
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,14 +12,14 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { email, password }
-      );
+      const res = await API.post("/api/auth/login", {
+        email,
+        password,
+      });
 
       localStorage.setItem("token", res.data.token);
-      navigate("/events");
-    } catch {
+      navigate("/events"); // ✅ redirect after login
+    } catch (err) {
       setError("Invalid credentials");
     }
   };
@@ -27,20 +27,27 @@ export default function Login() {
   return (
     <div className="auth-box">
       <h2>Login</h2>
+
       <form onSubmit={handleLogin}>
         <input
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
+
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
+
         {error && <p className="error">{error}</p>}
-        <button>Login</button>
+
+        <button type="submit">Login</button>
       </form>
     </div>
   );
