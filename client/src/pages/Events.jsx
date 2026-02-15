@@ -1,22 +1,30 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
+import axios from "axios";
+
+const BASE_URL = "https://bellcorp-backend-95w7.onrender.com";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    API.get("/api/events")
+    axios
+      .get(`${BASE_URL}/api/events`)
       .then((res) => setEvents(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   const registerEvent = async (id) => {
-    try {
-      await API.post(`/api/registrations/${id}`);
-      alert("Registered successfully");
-    } catch (err) {
-      alert(err.response?.data?.message || "Registration failed");
-    }
+    await axios.post(
+      `${BASE_URL}/api/registrations/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    alert("Registered successfully");
   };
 
   return (

@@ -1,6 +1,8 @@
 import { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import API from "../services/api";
+
+const BASE_URL = "https://bellcorp-backend-95w7.onrender.com";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -11,39 +13,25 @@ export default function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    try {
-      await API.post("/api/auth/register", {
-        name,
-        email,
-        password,
-      });
+    await axios.post(`${BASE_URL}/api/auth/register`, {
+      name,
+      email,
+      password,
+    });
 
-      alert("Account created successfully");
-      navigate("/login");
-    } catch (err) {
-      alert(err.response?.data?.message || "Signup failed");
-    }
+    navigate("/login");
   };
 
   return (
     <div className="auth-box">
       <h2>Signup</h2>
       <form onSubmit={handleSignup}>
-        <input
-          placeholder="Name"
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <input placeholder="Name" onChange={(e) => setName(e.target.value)} />
+        <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
         <input
           type="password"
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
-          required
         />
         <button>Create Account</button>
       </form>

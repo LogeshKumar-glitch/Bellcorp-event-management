@@ -1,30 +1,31 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
+import axios from "axios";
+
+const BASE_URL = "https://bellcorp-backend-95w7.onrender.com";
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    API.get("/api/registrations/my")
-      .then((res) => setEvents(res.data))
-      .catch((err) => console.error(err));
+    axios
+      .get(`${BASE_URL}/api/registrations/my`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => setEvents(res.data));
   }, []);
 
   return (
     <div style={{ padding: "40px" }}>
       <h2>My Registered Events</h2>
 
-      {events.length === 0 ? (
-        <p>No registered events</p>
-      ) : (
-        <ul>
-          {events.map((event) => (
-            <li key={event._id}>
-              {event.name} – {event.location}
-            </li>
-          ))}
-        </ul>
-      )}
+      {events.map((e) => (
+        <div key={e._id}>
+          <h4>{e.name}</h4>
+          <p>{e.location}</p>
+        </div>
+      ))}
     </div>
   );
 }

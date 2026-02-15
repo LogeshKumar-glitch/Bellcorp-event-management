@@ -1,6 +1,8 @@
 import { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import API from "../services/api"; // ✅ IMPORTANT
+
+const BASE_URL = "https://bellcorp-backend-95w7.onrender.com";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,14 +14,14 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await API.post("/api/auth/login", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${BASE_URL}/api/auth/login`,
+        { email, password }
+      );
 
       localStorage.setItem("token", res.data.token);
-      navigate("/events"); // ✅ redirect after login
-    } catch (err) {
+      navigate("/events");
+    } catch {
       setError("Invalid credentials");
     }
   };
@@ -27,27 +29,20 @@ export default function Login() {
   return (
     <div className="auth-box">
       <h2>Login</h2>
-
       <form onSubmit={handleLogin}>
         <input
-          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
         />
-
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
         />
-
         {error && <p className="error">{error}</p>}
-
-        <button type="submit">Login</button>
+        <button>Login</button>
       </form>
     </div>
   );
